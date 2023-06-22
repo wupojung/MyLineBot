@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MyLineBot.Models;
+using MyLineBot.Services;
 
 namespace MyLineBot.Controllers
 {
@@ -27,46 +28,33 @@ namespace MyLineBot.Controllers
         [HttpGet]
         public List<TalkModel> Get()
         {
-            return entiyList;
+            return TalkService.ListTalk();
         }
 
         [HttpGet("{id}")]
         public TalkModel GetItem(int id)
         {
-            return entiyList.Where(x => x.Id == id).FirstOrDefault();
+            return TalkService.GetTalk(id);
         }
 
         [HttpPost]
         public TalkModel Post([FromBody] TalkModel model)
         {
-            model.Id = entiyList.Count;
-            entiyList.Add(model);
-            return model; //update 
+            return TalkService.InsertTalk(model);
         }
 
         [HttpPut("{id}")]
         public TalkModel Put(int id, [FromBody] TalkModel model)
         {
-            TalkModel target = entiyList.Where(x => x.Id == id).FirstOrDefault();
-            if (target != null)
-            {
-                target.Keyword = model.Keyword;
-                target.Respond = model.Respond;
-            }
+            model.Id = id;
 
-            return target;
+            return TalkService.UpdateTalk(model);
         }
 
         [HttpDelete("{id:int}")]
         public int Delete(int id)
         {
-            TalkModel target = entiyList.Where(x => x.Id == id).FirstOrDefault();
-            if (target != null)
-            {
-                entiyList.Remove(target);
-            }
-
-            return entiyList.Count;
+            return TalkService.DeleteTalk(id);
         }
     }
 }
